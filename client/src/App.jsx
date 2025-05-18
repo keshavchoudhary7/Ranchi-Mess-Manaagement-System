@@ -3,7 +3,7 @@ import "./App.css";
 import Register from "./pages/register/Register";
 import SignIn from "./pages/signIn/SignIn";
 import Dashboard from "./pages/dashboard/Dashboard";
-import ProtectedRoute from "./privateRouting/ProtectedRoute";
+import ProtectedRoute from "./privateRoutes/ProtectedRouting";
 
 function App() {
   return (

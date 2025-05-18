@@ -1,10 +1,12 @@
-// components/ProtectedRoute.js
-import React from "react";
+// privateRouting/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
+
 const ProtectedRoute = ({ children }) => {
   const token = Cookies.get("token");
+
   const isAuthenticated = token ? true : false;
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
