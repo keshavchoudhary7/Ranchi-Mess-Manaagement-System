@@ -1,19 +1,17 @@
-// src/components/RegistrationWithImage.jsx
 import React, { useState } from "react";
-import Authnav from "../../components/authnavbar/Authnav";
-import { register } from "../../../apiConfig/authApi";
+import { login } from "../../../apiConfig/authApi";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [formData, setFormData] = useState({
-    fullName: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
+
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -24,27 +22,20 @@ const Register = () => {
     setLoading(true);
     setError("");
     setSuccess("");
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match");
-      return;
-    }
-
-    // Simulate an API call
 
     try {
-      const data = await register(formData);
-      console.log("Registration successful:", data);
-      setSuccess(data.message);
-      if (data.status === 201) {
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      }
+      const data = await login(formData);
+      const token = Cookies.set("token", data.token);
+      const userId = Cookies.set("userId", data.user.id);
+
+      navigate("/dashboard");
+
+      console.log("Login successful:", data);
+      setSuccess("Login successful!");
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Login error:", error);
       setError(
-        error.response?.data?.message ||
-          "Registration failed. Please try again."
+        error.response?.data?.message || "Login failed. Please try again."
       );
     } finally {
       setLoading(false);
@@ -54,8 +45,8 @@ const Register = () => {
   return (
     <>
       <div className="min-h-screen bg-blue-100 flex flex-col items-center justify-center px-4">
-        <div className="max-w-6xl w-full bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row items-center p-4 md:p-6 lg:p-10 gap-6 md:gap-8 lg:gap-10">
-          {/* Illustration Section - hidden on sm/md */}
+        <div className="max-w-6xl w-full bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row items-center p-6 lg:p-10 gap-10">
+          {/* Illustration Section */}
           <div className="hidden lg:flex w-full lg:w-1/2 justify-center">
             <img
               src="dabbawala.png"
@@ -66,9 +57,9 @@ const Register = () => {
 
           {/* Form Section */}
           <div className="w-full lg:w-1/2">
-            <div className="bg-gray-50 p-4 md:p-5 lg:p-6 rounded-xl shadow-inner">
-              <h2 className="text-xl md:text-2xl font-semibold text-center mb-4 md:mb-6">
-                Create Account
+            <div className="bg-gray-50 p-6 rounded-xl shadow-inner">
+              <h2 className="text-2xl font-semibold text-center mb-6">
+                Login to Account
               </h2>
 
               {success && (
@@ -83,18 +74,6 @@ const Register = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label className="block text-gray-600">Full Name</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    placeholder="Enter your full name"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                  />
-                </div>
                 <div>
                   <label className="block text-gray-600">Email</label>
                   <input
@@ -119,32 +98,19 @@ const Register = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <label className="block text-gray-600">
-                    Re-enter Password
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Re-enter your password"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                  />
-                </div>
+
                 <button
                   type="submit"
                   className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
                 >
-                  {loading ? "please wait..." : "Register"}
+                  {loading ? "please wait..." : "Login"}
                 </button>
 
-                {/* Already Registered */}
+                {/* Not Registered Yet */}
                 <p className="text-center text-sm mt-4">
-                  Already Registered?{" "}
+                  New user?{" "}
                   <a href="#" className="text-blue-600 hover:underline">
-                    Please Sign-in
+                    Create an account
                   </a>
                 </p>
               </form>
@@ -156,4 +122,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignIn;
